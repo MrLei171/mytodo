@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="todo">
+            <div class="todo-header">
+                <h1>待办事项</h1>
+            </div>
+            <div class="todo-content">
+                <div class="todo-content-search">
+                    <div :class='["todo-content-search-left",{allChecked:allChecked}]' @click='allCheckEvent'>></div>
+                    <div class="todo-content-search-right">
+                        <input type="text" placeholder="输入点啥吧" v-model="inputVal" @keyup.enter='saveNewTodo'>
+                    </div>
+                </div>
+                <div class="todo-content-viewList" v-for="(item,index) in filterTodo">
+                    <div class="todo-content-viewList-left">
+                        <input type="checkbox" name="" id="" v-model="item.state">
+                    </div>
+                    <div class="todo-content-viewList-middle" @dblclick.stop="editTodo(index)" :class="['todo-content-viewList-middle',{hidden:edit_index==index},{completed:item.state}]">
+                        {{ item.content }}
+                    </div>
+                    <!-- 待办事项编辑的输入框开始 -->
+                    <input type="text" v-model="item.content" :class="[{hidden:index!=edit_index},{ show:index==edit_index }]" @keyup.esc='cancelEditTodo(index)' @blur='saveEditTodo(index)' @keyup.enter='saveEditTodo(index)'>
+                    <!-- 待办事项编辑的输入框开始 -->
+                    <div class="todo-content-viewList-right" @click.stop='removeTodo(index)'>
+                        X
+                    </div>
+                </div>
+            </div>
+            <div class="todo-footer">
+                <div class="todo-footer-left">
+                    剩下{{ remaining.length }}项
+                </div>
+                <div class="todo-footer-middle">
+                    <a href="#/all" :class="[{ active:visibility == 'all'}]">All</a>
+                    <a href="#/active" :class="[{ active:visibility == 'active'}]">激活</a>
+                    <a href="#/finish" :class="[{ active:visibility == 'finish'}]">完成</a>
+                </div>
+                <div class="todo-footer-right" @click='clearFinish'>清除已完成</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.5.13/vue.js"></script>
+    <script>
+        // 定义一个本地存储的工具
+        // 获取数据 保存数据
+        // key = "mytodos"
+        let storageKey = "mytodos";
+        storageFunc = {
+            // 获取数据
+            fetch: function() {
+                return JSON.parse(localStorage.getItem(storageKey) || '[]');
+            },
+            save: function(todos) {
+                localStorage.setItem(storageKey, JSON.stringify(todos));
+            }
+        }
+        var vm = new Vue({
+            el: '#app',
+            watch: {
+                todoList: {
+                    handler(todoList) {
+                        storageFunc.save(todoList);
+                    },
+                    deep: true
+                }
+            },
+            data() {
+                return {
+                    visibility: 'all', //all为A所有选项,active为激活选项,finish为完成选项
+                    content_cache: '', //缓存的内容
+                    edit_index: -1, //表示没有在编辑的事项
+                    inputVal: '', //输入框的内容
+                    todoList: storageFunc.fetch(),
+                    allCheckedLabel: false
+                }
+            },
+
+
+            computed: {
+                // 过滤数组
+                filterTodo() {
+                    if (this.visibility == 'all') {
+                        return this.todoList;
+                    } else if (this.visibility == 'active') {
+                        return this.todoList.filter((item, index) => {
+                            return !item.state
+                        })
+                    } else {
+                        return this.todoList.filter((item, index) => {
+                            return item.state
+                        })
+                    }
+
+                },
+                // 未激活
+                remaining() {
+                    let remaining = this.todoList.filter((item, index) => {
+                        return !item.state
+                    })
+                    return remaining;
+                },
+                // 全选标志
+                allChecked() {
+                    // 默认全选
+                    let allChecked = true;
+                    this.todoList.forEach((item, index) => {
+                        if (!item.state) {
+                            allChecked = false
+                        }
+                    });
+                    return allChecked;
+                }
+            },
+            methods: {
+                // 清除已完成
+                clearFinish() {
+                    let finished = this.todoList.filter((item, index) => {
+                        return !item.state
+                    })
+                    this.todoList = finished;
+                },
+                //清空事项
+                removeTodo(index) {
+                    this.todoList.splice(index, 1)
+                },
+                // 取消编辑状态
+                cancelEditTodo(index) {
+                    this.todoList[index].content = this.content_cache;
+                    this.edit_index = -1; //取消编辑
+                    this.content_cache = ''; //清空缓存内容
+                },
+                // 保存待办事项编辑
+                saveEditTodo(index) {
+                    if (!this.todoList[index].content) {
+                        //当输入内容为空，删除该项
+                        this.todoList.splice(index, 1);
+                    }
+                    this.edit_index = -1;
+                },
+                // 待办事项的编辑
+                editTodo(index) {
+                    this.edit_index = index;
+
+                },
+                // 添加事项
+                // {
+                //     id:'',唯一值
+                //     content:inputVal
+                //     state:'false'
+                // }
+                saveNewTodo() {
+                    this.todoList.push({
+                        id: Date.now, //时间戳 用于做唯一标识
+                        content: this.inputVal,
+                        state: false
+                    })
+                },
+                // 全选
+                // 1.遍历数组
+                // 2.改变数组中所有的的state
+                allCheckEvent() {
+                    this.todoList.forEach((item, index) => {
+                        item.state = !this.allCheckedLabel; //true
+                    });
+                    this.allCheckedLabel = !this.allCheckedLabel //false
+                }
+            },
+
+        });
+        // 检测 hash 的变化
+        window.addEventListener("hashchange", function() {
+            console.log(window.location.hash);
+            vm.visibility = window.location.hash.replace("#/", "")
+            console.log(vm.visibility);
+        })
+    </script>
+</body>
+
+</html>

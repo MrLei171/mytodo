@@ -1,0 +1,65 @@
+#app .todo {
+  border: 1px solid #000;
+  width: 50%;
+  margin: 0 auto;
+}
+#app .todo .show {
+  display: block;
+  width: 80%;
+}
+#app .todo .hidden {
+  display: none;
+}
+#app .todo .todo-header h1 {
+  text-align: center;
+  font-weight: 100;
+}
+#app .todo .todo-content .todo-content-search {
+  display: flex;
+  height: 30px;
+  line-height: 30px;
+}
+#app .todo .todo-content .todo-content-search .todo-content-search-left {
+  flex: 1;
+  height: 100%;
+  text-align: center;
+  transform: rotate(90deg);
+}
+#app .todo .todo-content .todo-content-search .allChecked {
+  color: pink ;
+  font-weight: bold;
+}
+#app .todo .todo-content .todo-content-search .todo-content-search-right {
+  flex: 9;
+}
+#app .todo .todo-content .todo-content-search .todo-content-search-right input {
+  width: 100%;
+  height: 100%;
+}
+#app .todo .todo-content .todo-content-viewList {
+  display: flex;
+  height: 80px;
+  align-items: center;
+  border-bottom: 1px solid #000;
+}
+#app .todo .todo-content .todo-content-viewList .todo-content-viewList-left {
+  flex: 2;
+}
+#app .todo .todo-content .todo-content-viewList .todo-content-viewList-middle {
+  text-align: left;
+  flex: 8;
+}
+#app .todo .todo-content .todo-content-viewList .completed {
+  text-decoration: line-through;
+  color: gray;
+}
+#app .todo .todo-content .todo-content-viewList .todo-content-viewList-right {
+  flex: 1;
+}
+#app .todo .todo-footer {
+  justify-content: space-between;
+  display: flex;
+  border: 1px solid #000;
+  height: 50px;
+  line-height: 50px;
+}

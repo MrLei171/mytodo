@@ -1,0 +1,96 @@
+#app {
+    .todo {
+        border: 1px solid #000;
+        width: 50%;
+        margin: 0 auto;
+        .show{
+            display: block;
+            width: 80%;
+          
+        }
+        .hidden{
+            display: none;
+        }
+      .todo-header {
+        h1 {
+            text-align: center;
+            font-weight: 100;
+        }
+      }
+      .todo-content {    
+        .todo-content-search {
+            display: flex;
+            height: 30px;
+            line-height: 30px;
+          .todo-content-search-left {
+            flex:1;
+            height:100%;
+            text-align: center;
+            transform: rotate(90deg);
+          }
+          
+          .allChecked{
+              color: pink ;
+              font-weight: bold;
+          }
+          
+          .todo-content-search-right {
+              flex: 9;
+            input {
+                width: 100%;
+                height:100%
+            }
+          }
+        }
+  
+        .todo-content-viewList {
+            display: flex;
+            // justify-content: space-between;
+            height: 80px;
+            // line-height: 80px;
+            align-items: center;
+            border-bottom: 1px solid #000;
+          .todo-content-viewList-left {
+            flex: 2;
+            input {
+                
+            }
+          }
+  
+          .todo-content-viewList-middle {
+            text-align: left;
+            flex: 8;
+          }
+          .completed{
+              text-decoration: line-through;//中划线
+              color: gray;
+          }
+  
+          .todo-content-viewList-right {
+            flex: 1;
+          }
+        }
+      }
+  
+      .todo-footer {
+          justify-content: space-between;
+          display: flex;
+          border: 1px solid #000;
+          height: 50px;
+          line-height: 50px;
+        .todo-footer-left {
+            
+        }
+  
+        .todo-footer-middle {
+          a {
+  
+          }
+        }
+  
+        .todo-footer-right {
+  
+        }
+      }
+    }
+  }
